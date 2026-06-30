@@ -24,8 +24,8 @@ export default function AdminPanel({ user, onBack }) {
   const [location, setLocation] = useState('Belgium');
   const [vatStatus, setVatStatus] = useState('VAT deductible');
   const [color, setColor] = useState('Black');
-  const [euroClass, setEuroClass] = useState('Euro 6');
-  const [bodyType, setBodyType] = useState('Sedan');
+  const [euroClass, setEuroClass] = useState('Euro6d');
+  const [bodyType, setBodyType] = useState('Saloon');
   const [power, setPower] = useState('');
   const [co2, setCo2] = useState('');
   const [damageStatus, setDamageStatus] = useState('Normal');
@@ -104,8 +104,10 @@ export default function AdminPanel({ user, onBack }) {
         emission_class: euroClass,
         body_type: bodyType,
         power: power ? parseInt(power) : null,
+        cubic_capacity: cubic_capacity ? parseInt(cubic_capacity) : null,
         co2_emissions: co2 ? parseInt(co2) : null,
         damage_status: damageStatus,
+        source_supplier: filterSource || null, // Обвързваме източника (ARVAL, ALD и др.)
         lot_id: selectedLotId ? selectedLotId : null
       }
     ]);
@@ -161,7 +163,7 @@ export default function AdminPanel({ user, onBack }) {
                 <input type="number" required value={mileage} onChange={e => setMileage(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white outline-none focus:border-blue-500" />
               </div>
               <div>
-                <label className="block text-gray-400 mb-1">Мощност (к.с.)</label>
+                <label className="block text-gray-400 mb-1">Мощност (к.с. / HP)</label>
                 <input type="number" value={power} onChange={e => setPower(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white outline-none focus:border-blue-500" />
               </div>
             </div>
@@ -196,6 +198,7 @@ export default function AdminPanel({ user, onBack }) {
                 <select value={gearbox} onChange={e => setGearbox(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white outline-none focus:border-blue-500">
                   <option value="Automatic">Automatic</option>
                   <option value="Manual">Manual</option>
+                  <option value="Semi-automatic">Semi-automatic</option>
                 </select>
               </div>
             </div>
@@ -230,18 +233,18 @@ export default function AdminPanel({ user, onBack }) {
               <div>
                 <label className="block text-gray-400 mb-1">☁️ Емисии Евро</label>
                 <select value={euroClass} onChange={e => setEuroClass(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white outline-none focus:border-blue-500">
-                  <option value="Euro 6">Euro 6</option>
-                  <option value="Euro 5">Euro 5</option>
-                  <option value="Euro 4">Euro 4</option>
+                  <option value="Euro6d">Euro 6d</option>
+                  <option value="Euro6">Euro 6</option>
+                  <option value="Euro5">Euro 5</option>
                 </select>
               </div>
               <div>
                 <label className="block text-gray-400 mb-1">🚘 Тип Каросерия</label>
                 <select value={bodyType} onChange={e => setBodyType(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white outline-none focus:border-blue-500">
-                  <option value="Sedan">Sedan</option>
-                  <option value="Station Wagon">Avant / Kombi</option>
-                  <option value="SUV">SUV / Offroad</option>
-                  <option value="Van">Van / Minibus</option>
+                  <option value="Saloon">Saloon (Седан)</option>
+                  <option value="Estate Car">Estate Car (Комби)</option>
+                  <option value="SUV/Off-road Vehicle">SUV / Off-road</option>
+                  <option value="Van / Minibus">Van / Minibus</option>
                 </select>
               </div>
             </div>
@@ -252,6 +255,7 @@ export default function AdminPanel({ user, onBack }) {
                 <select value={damageStatus} onChange={e => setDamageStatus(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white outline-none focus:border-blue-500">
                   <option value="Normal">Здрав автомобил (Normal)</option>
                   <option value="Damaged">Повреден / Ударен (Damaged)</option>
+                  <option value="Technical issues">Технически проблем (Tech Issue)</option>
                 </select>
               </div>
               <div>
@@ -265,7 +269,7 @@ export default function AdminPanel({ user, onBack }) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-400 mb-1">📦 Избор на Лот / Аукционен канал</label>
+                <label className="block text-gray-400 mb-1">📦 Избор на Лот / Канал</label>
                 <select value={selectedLotId} onChange={e => setSelectedLotId(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white outline-none focus:border-blue-500">
                   <option value="">Индивидуална обява (Без лот)</option>
                   {lots.map(lot => (
@@ -274,7 +278,7 @@ export default function AdminPanel({ user, onBack }) {
                 </select>
               </div>
               <div>
-                <label className="block text-gray-400 mb-1">Линк към снимка на автомобила (URL)</label>
+                <label className="block text-gray-400 mb-1">Линк към снимка (URL)</label>
                 <input type="text" value={imageUrl} onChange={e => setImageUrl(e.target.value)} className="w-full bg-gray-900 border border-gray-800 rounded-xl p-3 text-white outline-none focus:border-blue-500" placeholder="Постави линк към изображение" />
               </div>
             </div>
