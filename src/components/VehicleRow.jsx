@@ -116,13 +116,13 @@ export default function VehicleRow({ cars, loading, setShowAuth }) {
                   </div>
                 </div>
 
-                {/* Секция за цени и бутони вдясно */}
-                <div className="w-full md:w-[200px] border-t md:border-t-0 border-gray-100 pt-3 md:pt-0 flex flex-col justify-center items-center md:items-end flex-shrink-0">
+                                {/* Секция за цени и бутони вдясно (СИН КОРПОРАТИВЕН СТИЛ) */}
+                <div className="w-full md:w-[200px] border-t md:border-t-0 border-gray-800/40 pt-3 md:pt-0 flex flex-col justify-center items-center md:items-end flex-shrink-0">
                   {car.price ? (
                     <div className="w-full text-center md:text-right space-y-1.5">
-                      <div className="text-xs text-gray-400 font-bold uppercase tracking-wider">Current Bid</div>
-                      <div className="text-xl font-black text-gray-900">{Number(car.price).toLocaleString()} €</div>
-                      <button className="w-full bg-[#0052cc] hover:bg-[#0043a4] text-white font-black py-2 rounded-md text-xs uppercase tracking-wider transition-all shadow-2xs">
+                      <div className="text-xs text-gray-500 uppercase tracking-wider font-bold">Current Bid</div>
+                      <div className="text-xl font-black text-white">{Number(car.price).toLocaleString()} €</div>
+                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md active:scale-98">
                         Place Bid
                       </button>
                     </div>
@@ -130,7 +130,7 @@ export default function VehicleRow({ cars, loading, setShowAuth }) {
                     <div className="w-full text-center md:text-right">
                       <button 
                         onClick={() => setShowAuth(true)} 
-                        className="w-full bg-[#e53935] hover:bg-[#d32f2f] text-white font-black py-2.5 rounded-md text-xs uppercase tracking-wider transition-all shadow-xs"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md active:scale-98"
                       >
                         Sign in to buy
                       </button>

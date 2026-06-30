@@ -15,6 +15,10 @@ function App() {
   const [showAuth, setShowAuth] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
 
+  // Табове и мерни единици eCarsTrade
+  const [activeTab, setActiveTab] = useState('AUCTIONS'); 
+  const [powerUnit, setPowerUnit] = useState('HP');
+
   // Стейтове за филтрация в реално време
   const [searchQuery, setSearchQuery] = useState(''); 
   const [quickCondition, setQuickCondition] = useState(''); 
@@ -29,7 +33,7 @@ function App() {
   const [filterSource, setFilterSource] = useState('');
   const [filterAuctionType, setFilterAuctionType] = useState('');
 
-  // Стейтове за диапазони От - До
+  // ДИАПАЗОНИ СЕКЦИИ ОТ - ДО (КОИТО БЯХА ИЗПУСНАТИ)
   const [filterMinYear, setFilterMinYear] = useState('');
   const [filterMaxYear, setFilterMaxYear] = useState('');
   const [filterMinMileage, setFilterMinMileage] = useState('');
@@ -58,13 +62,25 @@ function App() {
       setUserRole('standard_user');
     }
   };
-  const fetchCars = async () => {
+
+    const fetchCars = async () => {
     setLoading(true);
+    
+    // 1. Извличаме абсолютно всички налични коли за реалните броячи в реално време
     const { data: fullData } = await supabase.from('available_cars').select('*');
     if (fullData) setAllCarsCount(fullData);
 
+    // 2. Изграждаме филтрираната заявка към базата данни
     let query = supabase.from('available_cars').select('*');
 
+    // Автоматично филтриране на колите спрямо бутоните AUCTIONS или VEHICLES (eCarsTrade логика)
+    if (activeTab === 'AUCTIONS') {
+      query = query.eq('status', 'auction_active');
+    } else if (activeTab === 'VEHICLES') {
+      query = query.eq('status', 'available');
+    }
+
+    // Прилагане на текстово търсене и характеристики
     if (searchQuery) query = query.or(`title.ilike.%${searchQuery}%,brand.ilike.%${searchQuery}%,model.ilike.%${searchQuery}%`);
     if (quickCondition) query = query.eq('damage_status', quickCondition);
     if (filterBrand) query = query.ilike('brand', `%${filterBrand}%`);
@@ -78,6 +94,7 @@ function App() {
     if (filterSource) query = query.eq('source_supplier', filterSource);
     if (filterAuctionType) query = query.eq('auction_type', filterAuctionType);
 
+    // Прилагане на филтриращите диапазони От - До
     if (filterMinYear) query = query.gte('year', parseInt(filterMinYear));
     if (filterMaxYear) query = query.lte('year', parseInt(filterMaxYear));
     if (filterMinMileage) query = query.gte('mileage', parseInt(filterMinMileage));
@@ -96,7 +113,7 @@ function App() {
   
   useEffect(() => { 
     fetchCars(); 
-  }, [showAdmin, searchQuery, quickCondition, filterBrand, filterFuel, filterGearbox, filterLocation, filterVat, filterColor, filterEuroClass, filterBodyType, filterSource, filterAuctionType, filterMinYear, filterMaxYear, filterMinMileage, filterMaxMileage, filterMinPower, filterMaxPower, filterMinPrice, filterMaxPrice]);
+  }, [showAdmin, searchQuery, quickCondition, filterBrand, filterFuel, filterGearbox, filterLocation, filterVat, filterColor, filterEuroClass, filterBodyType, filterSource, filterAuctionType, filterMinYear, filterMaxYear, filterMinMileage, filterMaxMileage, filterMinPower, filterMaxPower, filterMinPrice, filterMaxPrice, activeTab]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -130,7 +147,7 @@ function App() {
           <div className="flex flex-col lg:flex-row gap-5 items-start">
             
             {/* Филтър панел */}
-            <FilterPanel 
+                        <FilterPanel 
               cars={cars} allCarsCount={allCarsCount} resetFilters={resetFilters}
               searchQuery={searchQuery} setSearchQuery={setSearchQuery}
               quickCondition={quickCondition} setQuickCondition={setQuickCondition}
@@ -148,6 +165,9 @@ function App() {
               filterMinMileage={filterMinMileage} filterMaxMileage={filterMaxMileage}
               filterMinPower={filterMinPower} filterMaxPower={filterMaxPower}
               filterMinPrice={filterMinPrice} filterMaxPrice={filterMaxPrice}
+              // ЕТО ТЕЗИ 4 РЕДА СЕ ДОБАВЯТ ЗА РАБОТАТА НА БУТОНИТЕ:
+              activeTab={activeTab} setActiveTab={setActiveTab}
+              powerUnit={powerUnit} setPowerUnit={setPowerUnit}
             />
 
             {/* Списък с хоризонтални коли */}
